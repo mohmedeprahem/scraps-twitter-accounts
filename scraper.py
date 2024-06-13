@@ -2,18 +2,35 @@ from twikit.errors import TooManyRequests
 from twikit import Client
 import re
 import time
+import os
 from datetime import datetime, timedelta
+from dotenv import load_dotenv
 
+load_dotenv()
 
 def login_client():
   client = Client('en-US')
-  # Login and save/load cookies
+  try:
+    if os.path.exists('cookies.json'):
+      client.load_cookies(path='cookies.json')
+      print("Cookies loaded successfully.")
+    else:
+      print("No existing cookie file found. Performing login...")
+      perform_login(client)
+      client.load_cookies(path='cookies.json')
+  except:
+    print("Failed to login. Try again later...")
+
+  return client
+
+
+def perform_login(client):
   client.login(
-    auth_info_1='MohamedIbr82388',
-    password='@Mohmed123',
+    auth_info_1=os.getenv('TWITTER_USERNAME'),
+    password=os.getenv('TWITTER_PASSWORD'),
   )
   client.save_cookies('cookies.json')
-  client.load_cookies(path='cookies.json')
+  print("Login successful. Cookies saved.")
 
   return client
 def scrape_twitter(accounts, interval):
@@ -21,7 +38,6 @@ def scrape_twitter(accounts, interval):
 
   while True:
     mentions_count = {}
-    interval_ago = datetime.now() - timedelta(seconds=interval)
 
     # Iterate over each account
     for account in accounts:
