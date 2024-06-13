@@ -4,9 +4,9 @@ import re
 import time
 from datetime import datetime, timedelta
 
-def scrape_twitter(accounts, interval):
-  client = Client('en-US')
 
+def login_client():
+  client = Client('en-US')
   # Login and save/load cookies
   client.login(
     auth_info_1='MohamedIbr82388',
@@ -14,6 +14,10 @@ def scrape_twitter(accounts, interval):
   )
   client.save_cookies('cookies.json')
   client.load_cookies(path='cookies.json')
+
+  return client
+def scrape_twitter(accounts, interval):
+  client = login_client()
 
   while True:
     mentions_count = {}
@@ -51,9 +55,7 @@ def scrape_twitter(accounts, interval):
     time.sleep(interval)
 
 twitter_accounts = ['Mr_Derivatives', 'warrior_0719', 'ChartingProdigy', 'allstarcharts', 'yuriymatso', 'TriggerTrades', 'AdamMancini4', 'CordovaTrades', 'Barchart', 'RoyLMattox']
-scraping_interval = 900
-
-
+scraping_interval = 3600
 
 scrape_twitter(twitter_accounts, scraping_interval)
 
